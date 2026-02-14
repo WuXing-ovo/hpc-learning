@@ -5,7 +5,7 @@
 void create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     // Avoid unexpected inputs
     if(num_of_row <= 0 || num_of_col <= 0){
-        fprintf(stderr, "Error, num of row and num of col must be positive!\n");
+        fprintf(stderr, "Error: num of row and num of col must be positive!\n");
         return;
     }
     // Initialize meta data of the matrix
@@ -13,4 +13,15 @@ void create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     mat->num_of_col = num_of_col;
     // Allocate memory
     mat->ptr = (double *) malloc((num_of_col * num_of_row) * sizeof(double));
+    // Check if the memory allocation was successful
+    if(mat->ptr == NULL){
+        fprintf(stderr, "Error: Failed to allocate memory for the matrix.\n");
+        return;
+    }
+}
+
+void free_matrix(struct matrix *mat){
+    // Free the memory of a matrix.
+    free(mat->ptr);
+    mat->ptr = NULL;
 }
