@@ -11,6 +11,6 @@ struct matrix{
     double * ptr;
 };
 
-void create_matrix(int num_of_row, int num_of_col, struct matrix *mat);
+int create_matrix(int num_of_row, int num_of_col, struct matrix *mat);
 
 #endif
