@@ -3,6 +3,14 @@
 
 #include <stdio.h>
 
+// Define error codes
+#define MATRIX_OK 0
+#define MATRIX_ERR_INVALID_ROW 1
+#define MATRIX_ERR_INVALID_COL 2
+#define MATRIX_ERR_ALLOCATION 3
+
+extern int matrix_errno;
+
 struct matrix{
     // Temperally use int, and it should be expanded when handle very large data.
     // All meta data of the matrix is here!
@@ -12,5 +20,9 @@ struct matrix{
 };
 
 int create_matrix(int num_of_row, int num_of_col, struct matrix *mat);
+
+void free_matrix(struct matrix *mat);
+
+double* get(const struct matrix *mat, int row, int col);
 
 #endif
