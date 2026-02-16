@@ -5,6 +5,20 @@
 // Initialize error code
 int matrix_errno = 0;
 
+static inline int validate_index(const struct matrix *mat, int row, int col){
+    // Check if the index is validated
+    // It is based on 0 start rule and metadata check, which can not be used for matrix creating
+    if(row < 0 || row >= mat->num_of_row){
+        matrix_errno = MATRIX_ERR_INVALID_ROW;
+        return 1;
+    }else if (col < 0 || col >= mat->num_of_col)
+    {
+        matrix_errno = MATRIX_ERR_INVALID_COL;
+        return 1;
+    }
+    return 0;
+}
+
 int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     // Avoid unexpected inputs
     if(num_of_row <= 0){
@@ -40,11 +54,7 @@ double* get(const struct matrix *mat, int row, int col){
     // Use a pointer from user to return element.
     // Check if the row or the col is negative.
     // Check if the col and row exist.
-    if(row < 0 || row >= mat->num_of_row){
-        matrix_errno = MATRIX_ERR_INVALID_ROW;
-        return NULL;
-    }else if(col < 0 || col >= mat->num_of_col){
-        matrix_errno = MATRIX_ERR_INVALID_COL;
+    if(validate_index(mat, row, col)){
         return NULL;
     }
     // Return a pointer to point the address of an element.
