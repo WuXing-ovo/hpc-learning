@@ -8,6 +8,7 @@
 #define MATRIX_ERR_INVALID_ROW 1
 #define MATRIX_ERR_INVALID_COL 2
 #define MATRIX_ERR_ALLOCATION 3
+#define MATRIX_ERR_INVALID_MATRIX 4
 
 extern int matrix_errno;
 
@@ -26,5 +27,7 @@ void free_matrix(struct matrix *mat);
 double* get(const struct matrix *mat, int row, int col);
 
 int set(struct matrix *mat, int row, int col, double value);
+
+int print_matrix(const struct matrix *mat, int precision);
 
 #endif

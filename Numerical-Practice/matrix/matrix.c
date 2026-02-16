@@ -67,11 +67,33 @@ double* get(const struct matrix *mat, int row, int col){
 }
 
 int set(struct matrix *mat, int row, int col, double value){
-    // Check if the row and col are validated
+    // Check if the row and col are valid
     if(validate_index(mat, row, col)){
         return 1;
     }
     // Repalce the value
     mat->ptr[row * mat->num_of_col + col] = value;
+    return 0;
+}
+
+int print_matrix(const struct matrix *mat, int precision){
+    // Check if the matrix is valid
+    if(mat->ptr == NULL){
+        matrix_errno = MATRIX_ERR_INVALID_MATRIX;
+        return 1;
+    }
+    // By default (when user type negative numbers), precision will be set to 4
+    if(precision < 0){
+        precision = 4;
+    }
+    // Dynamic width
+    int width = precision + 7;
+    // Print the matrix
+    for(int i=0; i<mat->num_of_row; i++){
+        for(int j=0; j<mat->num_of_col; j++){
+            printf("%*.*f ", width, precision, mat->ptr[i * mat->num_of_col + j]);
+        }
+        printf("\n");
+    }
     return 0;
 }
