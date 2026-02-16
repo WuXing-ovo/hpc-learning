@@ -65,3 +65,13 @@ double* get(const struct matrix *mat, int row, int col){
     // It might be changed in later versions when I realize that perfomance is not a threshold.
     return (double *)(mat->ptr + (row * mat->num_of_col + col));
 }
+
+int set(struct matrix *mat, int row, int col, double value){
+    // Check if the row and col are validated
+    if(validate_index(mat, row, col)){
+        return 1;
+    }
+    // Repalce the value
+    mat->ptr[row * mat->num_of_col + col] = value;
+    return 0;
+}

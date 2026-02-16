@@ -25,4 +25,6 @@ void free_matrix(struct matrix *mat);
 
 double* get(const struct matrix *mat, int row, int col);
 
+int set(struct matrix *mat, int row, int col, double value);
+
 #endif
