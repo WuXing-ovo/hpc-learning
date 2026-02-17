@@ -30,4 +30,6 @@ int set(struct matrix *mat, int row, int col, double value);
 
 int print_matrix(const struct matrix *mat, int precision);
 
+int fill(struct matrix *mat, double num);
+
 #endif

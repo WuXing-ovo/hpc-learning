@@ -19,6 +19,28 @@ static inline int validate_index(const struct matrix *mat, int row, int col){
     return 0;
 }
 
+static inline int validate_matrix(const struct matrix *mat){
+    // Check if the matrix is valid
+    // 0 for ok, 1 for not ok
+    // For robust, it will also check the meta data
+    if(mat->ptr == NULL){
+        // Check if the pointer is NULL
+        matrix_errno = MATRIX_ERR_INVALID_MATRIX;
+        return 1;
+    }else if (mat->num_of_row <= 0)
+    {
+        // Check if the row number is valid
+        matrix_errno = MATRIX_ERR_INVALID_ROW;
+        return 1;
+    }else if (mat->num_of_col <= 0)
+    {
+        // Check if the col number is valid
+        matrix_errno = MATRIX_ERR_INVALID_COL;
+        return 1;
+    }
+    return 0;
+}
+
 int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     // Avoid unexpected inputs
     if(num_of_row <= 0){
@@ -94,6 +116,18 @@ int print_matrix(const struct matrix *mat, int precision){
             printf("%*.*f ", width, precision, mat->ptr[i * mat->num_of_col + j]);
         }
         printf("\n");
+    }
+    return 0;
+}
+
+int fill(struct matrix *mat, double num){
+    // Check if the matrix is valid
+    if(validate_matrix(mat)){
+        return 1;
+    }
+    // Replace all numbers with a specific number
+    for(int i=0; i<(mat->num_of_row * mat->num_of_col); i++){
+        mat->ptr[i] = num;
     }
     return 0;
 }
