@@ -8,6 +8,10 @@ int matrix_errno = 0;
 static inline int validate_index(const struct matrix *mat, int row, int col){
     // Check if the index is validated
     // It is based on 0 start rule and metadata check, which can not be used for matrix creating
+    if(mat == NULL || mat->ptr == NULL){
+        matrix_errno = MATRIX_ERR_INVALID_MATRIX;
+        return 1;
+    }
     if(row < 0 || row >= mat->num_of_row){
         matrix_errno = MATRIX_ERR_INVALID_ROW;
         return 1;
@@ -23,7 +27,7 @@ static inline int validate_matrix(const struct matrix *mat){
     // Check if the matrix is valid
     // 0 for ok, 1 for not ok
     // For robust, it will also check the meta data
-    if(mat->ptr == NULL){
+    if(mat == NULL || mat->ptr == NULL){
         // Check if the pointer is NULL
         matrix_errno = MATRIX_ERR_INVALID_MATRIX;
         return 1;
@@ -42,6 +46,11 @@ static inline int validate_matrix(const struct matrix *mat){
 }
 
 int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
+    // Check matrix validity
+    if(mat == NULL){
+        matrix_errno = MATRIX_ERR_INVALID_MATRIX;
+        return 1;
+    }
     // Avoid unexpected inputs
     if(num_of_row <= 0){
         matrix_errno = MATRIX_ERR_INVALID_ROW;
@@ -51,7 +60,7 @@ int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     {
         matrix_errno = MATRIX_ERR_INVALID_COL;
         mat->ptr = NULL;
-        return 2;
+        return 1;
     }
     // Initialize meta data of the matrix
     mat->num_of_row = num_of_row;
@@ -61,13 +70,16 @@ int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     // Check if the memory allocation was successful
     if(mat->ptr == NULL){
         matrix_errno = MATRIX_ERR_ALLOCATION;
-        return 3;
+        return 1;
     }
     return 0;
 }
 
 void free_matrix(struct matrix *mat){
     // Free the memory of a matrix.
+    if(validate_matrix(mat)){
+        return;
+    }
     free(mat->ptr);
     mat->ptr = NULL;
 }
@@ -100,8 +112,7 @@ int set(struct matrix *mat, int row, int col, double value){
 
 int print_matrix(const struct matrix *mat, int precision){
     // Check if the matrix is valid
-    if(mat->ptr == NULL){
-        matrix_errno = MATRIX_ERR_INVALID_MATRIX;
+    if(validate_matrix(mat)){
         return 1;
     }
     // By default (when user type negative numbers), precision will be set to 4
