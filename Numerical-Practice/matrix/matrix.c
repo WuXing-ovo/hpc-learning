@@ -66,7 +66,8 @@ int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     mat->num_of_row = num_of_row;
     mat->num_of_col = num_of_col;
     // Allocate memory
-    mat->ptr = (double *) malloc((num_of_col * num_of_row) * sizeof(double));
+    size_t num_of_elements = (size_t)num_of_col * num_of_row;
+    mat->ptr = (double *) malloc( num_of_elements * sizeof(double));
     // Check if the memory allocation was successful
     if(mat->ptr == NULL){
         matrix_errno = MATRIX_ERR_ALLOCATION;
@@ -97,7 +98,8 @@ double* get(const struct matrix *mat, int row, int col){
     // This function will return the memory address of the matrix to user
     // Make sure you and your implemention won't abuse that.
     // It might be changed in later versions when I realize that perfomance is not a threshold.
-    return (double *)(mat->ptr + (row * mat->num_of_col + col));
+    size_t element_index = (size_t)row * mat->num_of_col + col;
+    return (double *)(mat->ptr + (element_index));
 }
 
 int set(struct matrix *mat, int row, int col, double value){
@@ -106,7 +108,8 @@ int set(struct matrix *mat, int row, int col, double value){
         return 1;
     }
     // Repalce the value
-    mat->ptr[row * mat->num_of_col + col] = value;
+    size_t element_index = (size_t)row * mat->num_of_col + col;
+    mat->ptr[element_index] = value;
     return 0;
 }
 
@@ -124,7 +127,8 @@ int print_matrix(const struct matrix *mat, int precision){
     // Print the matrix
     for(int i=0; i<mat->num_of_row; i++){
         for(int j=0; j<mat->num_of_col; j++){
-            printf("%*.*f ", width, precision, mat->ptr[i * mat->num_of_col + j]);
+            size_t element_index = (size_t)i * mat->num_of_col + j;
+            printf("%*.*f ", width, precision, mat->ptr[element_index]);
         }
         printf("\n");
     }
@@ -136,9 +140,43 @@ int fill(struct matrix *mat, double num){
     if(validate_matrix(mat)){
         return 1;
     }
+    // Computing num of elements outside for loop
+    // Use size_t rather than int
+    size_t num_of_elements = (size_t)mat->num_of_row * mat->num_of_col;
     // Replace all numbers with a specific number
-    for(int i=0; i<(mat->num_of_row * mat->num_of_col); i++){
+    for(size_t i=0; i<num_of_elements; i++){
         mat->ptr[i] = num;
+    }
+    return 0;
+}
+
+int fill_0(struct matrix *mat){
+    // Just use fill() with 0
+    return fill(mat, 0);
+}
+
+int fill_1(struct matrix *mat){
+    // Just use fill() with 1
+    return fill(mat, 1);
+}
+
+int identity_matrix(struct matrix *mat){
+    // Check if the matrix is valid
+    if(validate_matrix(mat)){
+        return 1;
+    }
+    // Check if the matrix is squared
+    if(mat->num_of_col != mat->num_of_row){
+        matrix_errno = MATRIX_ERR_NOT_SQUARED;
+        return 1;
+    }
+    // Replace all elements with 0 firstly
+    // then replace diagonal elements with 1
+    // which can save lots of logical compare
+    fill_0(mat);
+    for(int j=0; j<mat->num_of_row; j++){
+        size_t diag_index = (size_t)mat->num_of_col * j + j;
+        mat->ptr[diag_index] = 1;
     }
     return 0;
 }

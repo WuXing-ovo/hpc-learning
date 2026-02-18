@@ -9,6 +9,7 @@
 #define MATRIX_ERR_INVALID_COL 2
 #define MATRIX_ERR_ALLOCATION 3
 #define MATRIX_ERR_INVALID_MATRIX 4
+#define MATRIX_ERR_NOT_SQUARED 5
 
 extern int matrix_errno;
 
@@ -31,5 +32,11 @@ int set(struct matrix *mat, int row, int col, double value);
 int print_matrix(const struct matrix *mat, int precision);
 
 int fill(struct matrix *mat, double num);
+
+int fill_0(struct matrix *mat);
+
+int fill_1(struct matrix *mat);
+
+int identity_matrix(struct matrix *mat);
 
 #endif
