@@ -6,6 +6,8 @@
 // Prototypes
 void test_create_matrix();
 void test_get_and_set();
+void test_fills();
+void test_identity();
 
 int main(){
     test_create_matrix();
@@ -13,7 +15,13 @@ int main(){
 
     test_get_and_set();
     printf("✅ test_get_and_set: pass!\n");
+
+    test_fills();
+    printf("✅ test_fills: pass!\n");
     
+    test_identity();
+    printf("✅ test_indentity: pass!\n");
+
     return 0;
 }
 
@@ -127,6 +135,86 @@ void test_get_and_set(){
     ptr = get(NULL, 1, 1);
     assert(ptr == NULL);
     assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    free_matrix(&mat);
+}
+
+void test_fills(){
+    struct matrix mat;
+    create_matrix(3, 3, &mat);
+
+    // Test fill() with 5.2
+    matrix_errno = 0;
+    int result = fill(&mat, 5.2);
+    assert(result == 0);
+    size_t num_of_elements = (size_t)mat.num_of_col * mat.num_of_row;
+    for(size_t i=0; i<num_of_elements; i++){
+        assert(mat.ptr[i] == 5.2);
+    }
+    // Test fill() with NULL
+    matrix_errno = 0;
+    result = fill(NULL, 5.2);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    // Test fill_0()
+    matrix_errno = 0;
+    result = fill_0(&mat);
+    assert(result == 0);
+    num_of_elements = (size_t)mat.num_of_col * mat.num_of_row;
+    for(size_t i=0; i<num_of_elements; i++){
+        assert(mat.ptr[i] == 0);
+    }
+    // Test fill_0() with NULL
+    matrix_errno = 0;
+    result = fill_0(NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    // Test fill_1()
+    matrix_errno = 0;
+    result = fill_1(&mat);
+    assert(result == 0);
+    num_of_elements = (size_t)mat.num_of_row * mat.num_of_col;
+    for(size_t i=0; i<num_of_elements; i++){
+        assert(mat.ptr[i] == 1);
+    }
+    // Test fill_1() with NULL
+    matrix_errno = 0;
+    result = fill_1(NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    free_matrix(&mat);
+}
+
+void test_identity(){
+    struct matrix mat;
+    // Happy path, when input matrix is squared
+    create_matrix(3, 3, &mat);
+    int result = identity_matrix(&mat);
+    assert(result == 0);
+    for(size_t i=0; i<mat.num_of_row; i++){
+        for(size_t j=0; j<mat.num_of_col; j++){
+            if(i == j){
+                assert(mat.ptr[(size_t)i * mat.num_of_col + j] == 1);
+                continue;
+            }
+            assert(mat.ptr[(size_t)i * mat.num_of_col + j] == 0);
+        }
+    }
+    free_matrix(&mat);
+
+    // When input matrix is not squared
+    create_matrix(1, 3, &mat);
+    result = identity_matrix(&mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_NOT_SQUARED);
+    assert(mat.ptr != NULL);
+
+    // When input pointer is NULL
+    result = identity_matrix(NULL);
+    assert(result == 1);
 
     free_matrix(&mat);
 }
