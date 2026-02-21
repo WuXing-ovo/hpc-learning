@@ -8,6 +8,7 @@ void test_create_matrix();
 void test_get_and_set();
 void test_fills();
 void test_identity();
+void test_matrix_add();
 
 int main(){
     test_create_matrix();
@@ -21,6 +22,9 @@ int main(){
     
     test_identity();
     printf("✅ test_indentity: pass!\n");
+
+    test_matrix_add();
+    printf("✅ test_matrix_add: pass!\n");
 
     return 0;
 }
@@ -217,4 +221,65 @@ void test_identity(){
     assert(result == 1);
 
     free_matrix(&mat);
+}
+
+void test_matrix_add(){
+    struct matrix mat_1;
+    struct matrix mat_2;
+    struct matrix result_mat;
+
+    // Happy path
+    create_matrix(3, 3, &mat_1);
+    fill_1(&mat_1);
+    create_matrix(3, 3, &mat_2);
+    fill_1(&mat_2);
+    create_matrix(3, 3, &result_mat);
+
+    matrix_errno = 0;
+    int result = matrix_add(&mat_1, &mat_2, &result_mat);
+    assert(result == 0);
+    size_t num_of_elements = (size_t)mat_1.num_of_row * mat_1.num_of_col;
+    for(size_t i=0; i<num_of_elements; i++){
+        assert(result_mat.ptr[i] == mat_1.ptr[i] + mat_2.ptr[i]);
+    }
+
+    // When pointers are NULL
+    matrix_errno = 0;
+    result = matrix_add(NULL, &mat_2, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    matrix_errno = 0;
+    result = matrix_add(&mat_1, NULL, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    matrix_errno = 0;
+    result = matrix_add(&mat_1, &mat_2, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    matrix_errno = 0;
+    result = matrix_add(NULL, NULL, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    
+    // Free all matrices
+    // To avoid unexpected changes
+    free_matrix(&mat_1);
+    free_matrix(&mat_2);
+    free_matrix(&result_mat);
+    // And recreate them
+    create_matrix(3, 1, &mat_1);
+    fill_1(&mat_1);
+    create_matrix(3, 3, &mat_2);
+    fill_1(&mat_2);
+    create_matrix(3, 3, &result_mat);
+
+    // Test invalid inputs: DIMENSION_MISMATCH
+    matrix_errno = 0;
+    result = matrix_add(&mat_1, &mat_2, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
+
+    free_matrix(&mat_1);
+    free_matrix(&mat_2);
+    free_matrix(&result_mat);
 }
