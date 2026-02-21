@@ -180,3 +180,21 @@ int identity_matrix(struct matrix *mat){
     }
     return 0;
 }
+
+int matrix_add(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result){
+    // Check input matrices validity
+    if(validate_matrix(mat_1) || validate_matrix(mat_2) || validate_matrix(result)){
+        return 1;
+    }
+    // Check dimensions of matrices
+    if(mat_1->num_of_row != mat_2->num_of_row || mat_1->num_of_col != mat_2->num_of_col || mat_1->num_of_row != result->num_of_row || mat_1->num_of_col != result->num_of_col){
+        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+        return 1;
+    }
+    // Add element by element
+    size_t num_of_element = (size_t)mat_1->num_of_row * mat_1->num_of_col;
+    for(size_t i=0; i<num_of_element; i++){
+        result->ptr[i] = mat_1->ptr[i] + mat_2->ptr[i];
+    }
+    return 0;
+}

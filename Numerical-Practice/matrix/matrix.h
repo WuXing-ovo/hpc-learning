@@ -10,6 +10,7 @@
 #define MATRIX_ERR_ALLOCATION 3
 #define MATRIX_ERR_INVALID_MATRIX 4
 #define MATRIX_ERR_NOT_SQUARED 5
+#define MATRIX_ERR_DIMENSION_MISMATCH 6
 
 extern int matrix_errno;
 
@@ -38,5 +39,7 @@ int fill_0(struct matrix *mat);
 int fill_1(struct matrix *mat);
 
 int identity_matrix(struct matrix *mat);
+
+int matrix_add(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result);
 
 #endif
