@@ -10,6 +10,7 @@ void test_fills();
 void test_identity();
 void test_matrix_add();
 void test_matrix_subtract();
+void test_matrix_scalar_multiply();
 
 int main(){
     test_create_matrix();
@@ -29,6 +30,9 @@ int main(){
 
     test_matrix_subtract();
     printf("✅ test_matrix_subtract: pass!\n");
+
+    test_matrix_scalar_multiply();
+    printf("✅ test_matrix_scalar_multiply: pass!\n");
 
     return 0;
 }
@@ -346,5 +350,55 @@ void test_matrix_subtract(){
 
     free_matrix(&mat_1);
     free_matrix(&mat_2);
+    free_matrix(&result_mat);
+}
+
+void test_matrix_scalar_multiply(){
+    struct matrix mat;
+    struct matrix result_mat;
+
+    // Normal condition
+    create_matrix(3, 3, &mat);
+    create_matrix(3, 3, &result_mat);
+    fill(&mat, 5.2);
+
+    matrix_errno = 0;
+    double scalar = 2.0;
+    int result = matrix_scalar_multiply(&mat, scalar, &result_mat);
+    assert(result == 0);
+    size_t num_of_elements = (size_t)mat.num_of_row * mat.num_of_col;
+    for(size_t i=0; i<num_of_elements; i++){
+        assert(result_mat.ptr[i] == mat.ptr[i] * scalar);
+    }
+
+    // When mat is NULL
+    matrix_errno = 0;
+    result = matrix_scalar_multiply(NULL, scalar, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When result_mat is NULL
+    matrix_errno = 0;
+    result = matrix_scalar_multiply(&mat, scalar, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When both of them are NULL
+    matrix_errno = 0;
+    result = matrix_scalar_multiply(NULL, scalar, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    // Free all matrices
+    free_matrix(&mat);
+    free_matrix(&result_mat);
+
+    // Test dimensions mismatch
+    matrix_errno = 0;
+    create_matrix(3, 3, &mat);
+    create_matrix(3, 1, &result_mat);
+    result = matrix_scalar_multiply(&mat, scalar, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
+
+    free_matrix(&mat);
     free_matrix(&result_mat);
 }
