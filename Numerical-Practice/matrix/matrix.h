@@ -42,4 +42,6 @@ int identity_matrix(struct matrix *mat);
 
 int matrix_add(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result);
 
+int matrix_subtract(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result);
+
 #endif
