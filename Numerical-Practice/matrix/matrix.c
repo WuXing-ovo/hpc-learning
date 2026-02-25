@@ -45,6 +45,14 @@ static inline int validate_matrix(const struct matrix *mat){
     return 0;
 }
 
+static inline int dimension_check(const struct matrix *mat_1, const struct matrix *mat_2, const struct matrix *result){
+    if(mat_1->num_of_row != mat_2->num_of_row || mat_1->num_of_col != mat_2->num_of_col || mat_1->num_of_row != result->num_of_row || mat_1->num_of_col != result->num_of_col){
+        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+        return 1;
+    }
+    return 0;
+}
+
 int create_matrix(int num_of_row, int num_of_col, struct matrix *mat){
     // Check matrix validity
     if(mat == NULL){
@@ -187,8 +195,7 @@ int matrix_add(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result
         return 1;
     }
     // Check dimensions of matrices
-    if(mat_1->num_of_row != mat_2->num_of_row || mat_1->num_of_col != mat_2->num_of_col || mat_1->num_of_row != result->num_of_row || mat_1->num_of_col != result->num_of_col){
-        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+    if(dimension_check(mat_1, mat_2, result)){
         return 1;
     }
     // Add element by element
