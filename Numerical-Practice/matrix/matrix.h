@@ -44,4 +44,6 @@ int matrix_add(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result
 
 int matrix_subtract(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result);
 
+int matrix_scalar_multiply(struct matrix *mat, double scalar, struct matrix *result);
+
 #endif

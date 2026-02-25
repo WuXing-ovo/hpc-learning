@@ -222,3 +222,21 @@ int matrix_subtract(struct matrix *mat_1, struct matrix *mat_2, struct matrix *r
     }
     return 0;
 }
+
+int matrix_scalar_multiply(struct matrix *mat, double scalar, struct matrix *result){
+    // Check if matrices are valid
+    if(validate_matrix(mat) || validate_matrix(result)){
+        return 1;
+    }
+    // Check if dimensions match
+    if(mat->num_of_row != result->num_of_row || mat->num_of_col != result->num_of_col){
+        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+        return 1;
+    }
+    // Multiply each element by scalar
+    size_t num_of_element = (size_t)mat->num_of_row * mat->num_of_col;
+    for(size_t i=0; i<num_of_element; i++){
+        result->ptr[i] = scalar * mat->ptr[i];
+    }
+    return 0;
+}
