@@ -11,6 +11,7 @@ void test_identity();
 void test_matrix_add();
 void test_matrix_subtract();
 void test_matrix_scalar_multiply();
+void test_matrix_transpose();
 
 int main(){
     test_create_matrix();
@@ -33,6 +34,9 @@ int main(){
 
     test_matrix_scalar_multiply();
     printf("✅ test_matrix_scalar_multiply: pass!\n");
+
+    test_matrix_transpose();
+    printf("✅ test_matrix_transpose: pass!\n");
 
     return 0;
 }
@@ -396,6 +400,52 @@ void test_matrix_scalar_multiply(){
     create_matrix(3, 3, &mat);
     create_matrix(3, 1, &result_mat);
     result = matrix_scalar_multiply(&mat, scalar, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
+
+    free_matrix(&mat);
+    free_matrix(&result_mat);
+}
+
+void test_matrix_transpose(){
+    struct matrix mat;
+    struct matrix result_mat;
+    create_matrix(3, 1, &mat);
+    create_matrix(1, 3, &result_mat);
+
+    // Normal condition
+    matrix_errno = 0;
+    int result = matrix_transpose(&mat, &result_mat);
+    assert(result == 0);
+    for(int i=0; i<mat.num_of_row; i++){
+        for(int j=0; j<mat.num_of_col; j++){
+            assert(result_mat.ptr[j * result_mat.num_of_col + i] == mat.ptr[i * mat.num_of_col + j]);
+        }
+    }
+
+    // When mat is NULL
+    matrix_errno = 0;
+    result = matrix_transpose(NULL, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When result is NULL
+    matrix_errno = 0;
+    result = matrix_transpose(&mat, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When both of matrices are NULL
+    matrix_errno = 0;
+    result = matrix_transpose(NULL, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    // Free the result matrix and create a new matrix with different dimensions
+    free_matrix(&result_mat);
+    create_matrix(3, 3, &result_mat);
+
+    // Test dimensions mismatch
+    matrix_errno = 0;
+    result = matrix_transpose(&mat, &result_mat);
     assert(result == 1);
     assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
 
