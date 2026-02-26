@@ -12,6 +12,7 @@ void test_matrix_add();
 void test_matrix_subtract();
 void test_matrix_scalar_multiply();
 void test_matrix_transpose();
+void test_matrix_multiply();
 
 int main(){
     test_create_matrix();
@@ -37,6 +38,9 @@ int main(){
 
     test_matrix_transpose();
     printf("✅ test_matrix_transpose: pass!\n");
+
+    test_matrix_multiply();
+    printf("✅ test_matrix_multiply: pass!\n");
 
     return 0;
 }
@@ -450,5 +454,74 @@ void test_matrix_transpose(){
     assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
 
     free_matrix(&mat);
+    free_matrix(&result_mat);
+}
+
+void test_matrix_multiply(){
+    struct matrix mat_1;
+    struct matrix mat_2;
+    struct matrix result_mat;
+    struct matrix verify_mat;
+    create_matrix(3, 2, &mat_1);
+    create_matrix(2, 3, &mat_2);
+    create_matrix(3, 3, &result_mat);
+    create_matrix(3, 3, &verify_mat);
+
+    // Normal condition
+    matrix_errno = 0;
+    fill(&mat_1, 5.2);
+    fill(&mat_2, 13.14);
+    int result = matrix_multiply(&mat_1, &mat_2, &result_mat);
+    assert(result == 0);
+    for(int i=0; i<verify_mat.num_of_row; i++){
+        for(int j=0; j<verify_mat.num_of_col; j++){
+            double sum = 0.0;
+            // Loop by n, for mat_1 is m*n
+            for(int k=0; k<mat_1.num_of_col; k++){
+                sum += (mat_1.ptr[i * mat_1.num_of_col + k] * mat_2.ptr[k * mat_2.num_of_col + j]);
+            }
+            verify_mat.ptr[i * verify_mat.num_of_col + j] = sum;
+        }
+    }
+    for(int i=0; i<result_mat.num_of_row; i++){
+        for(int j=0; j<result_mat.num_of_col; j++){
+            assert(result_mat.ptr[i * result_mat.num_of_col + j] == verify_mat.ptr[i * verify_mat.num_of_col + j]);
+        }
+    }
+
+    // When mat_1 is NULL
+    matrix_errno = 0;
+    result = matrix_multiply(NULL, &mat_2, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When mat_2 is NULL
+    matrix_errno = 0;
+    result = matrix_multiply(&mat_1, NULL, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When result_mat is NULL
+    matrix_errno = 0;
+    result = matrix_multiply(&mat_1, &mat_2, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+    // When all inputs are NULL
+    matrix_errno = 0;
+    result = matrix_multiply(NULL, NULL, NULL);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_INVALID_MATRIX);
+
+    // Free the result matrix and create a new matrix with different dimensions
+    free_matrix(&mat_2);
+    create_matrix(2, 4, &mat_2);
+    fill_1(&mat_2);
+    
+    // Test dimensions mismatch
+    matrix_errno = 0;
+    result = matrix_multiply(&mat_1, &mat_2, &result_mat);
+    assert(result == 1);
+    assert(matrix_errno == MATRIX_ERR_DIMENSION_MISMATCH);
+
+    free_matrix(&mat_1);
+    free_matrix(&mat_2);
     free_matrix(&result_mat);
 }
