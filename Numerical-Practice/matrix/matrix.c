@@ -240,3 +240,22 @@ int matrix_scalar_multiply(struct matrix *mat, double scalar, struct matrix *res
     }
     return 0;
 }
+
+int matrix_transpose(struct matrix *mat, struct matrix *result){
+    // Check if matrices are valid
+    if(validate_matrix(mat) || validate_matrix(result)){
+        return 1;
+    }
+    // Check if dimensions match, mat should be m*n and result should be n*m
+    if(result->num_of_col != mat->num_of_row || result->num_of_row != mat->num_of_col){
+        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+        return 1;
+    }
+    // Transpose the matrix with two loops
+    for(int i=0; i<mat->num_of_row; i++){
+        for(int j=0; j<mat->num_of_col; j++){
+            result->ptr[(size_t)j * result->num_of_col + i] = mat->ptr[(size_t)i * mat->num_of_col + j];
+        }
+    }
+    return 0;
+}
