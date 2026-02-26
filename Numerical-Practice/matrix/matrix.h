@@ -48,4 +48,6 @@ int matrix_scalar_multiply(struct matrix *mat, double scalar, struct matrix *res
 
 int matrix_transpose(struct matrix *mat, struct matrix *result);
 
+int matrix_multiply(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result);
+
 #endif

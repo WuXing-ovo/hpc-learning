@@ -259,3 +259,27 @@ int matrix_transpose(struct matrix *mat, struct matrix *result){
     }
     return 0;
 }
+
+int matrix_multiply(struct matrix *mat_1, struct matrix *mat_2, struct matrix *result){
+    // Check if matrices are valid
+    if(validate_matrix(mat_1) || validate_matrix(mat_2) || validate_matrix(result)){
+        return 1;
+    }
+    // Check if dimensions match, mat_1 is m*n, mat_2 is n*p, result is m*p
+    if(mat_1->num_of_row != result->num_of_row || mat_2->num_of_col != result->num_of_col){
+        matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
+        return 1;
+    }
+    // Loop by element of result
+    for(int i=0; i<result->num_of_row; i++){
+        for(int j=0; j<result->num_of_col; j++){
+            double sum = 0.0;
+            // Loop by n, for mat_1 is m*n
+            for(int k=0; k<mat_1->num_of_col; k++){
+                sum += (mat_1->ptr[i * mat_1->num_of_col + k] * mat_2->ptr[k * mat_2->num_of_col + j]);
+            }
+            result->ptr[i * result->num_of_col + j] = sum;
+        }
+    }
+    return 0;
+}
