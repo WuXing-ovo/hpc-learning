@@ -18,11 +18,19 @@ It contains small projects, experiments, and practice code focused on numerical 
 Each subproject has its own build instructions.  
 Please check the README inside the corresponding directory.
 
-## Roadmap
-- Add performance benchmarks
-- Optimize matrix multiplication
-- Introduce OpenMP for parallel execution
-- Add new features (e.g., LU decomposition)
+## Roadmap / TODO
+
+### Matrix Library
+- [✅] Basic operations (add, subtract, multiply)
+- [✅] Transpose
+- [ ] Performance benchmarking
+- [ ] OpenMP parallelization
+- [ ] Cache-optimized matrix multiplication
+
+### Future
+- [ ] LU decomposition
+- [ ] Matrix inversion
+- [ ] Eigenvalue computation
 
 ## License
 MIT © 2026 WuXing-ovo
