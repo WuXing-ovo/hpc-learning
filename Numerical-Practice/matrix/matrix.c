@@ -270,15 +270,23 @@ int matrix_multiply(struct matrix *mat_1, struct matrix *mat_2, struct matrix *r
         matrix_errno = MATRIX_ERR_DIMENSION_MISMATCH;
         return 1;
     }
+
+    // Set m, n, p
+    int m = mat_1->num_of_row;
+    int n = mat_1->num_of_col;
+    int p = mat_2->num_of_col;
+
+    // Initialize result matrix
+    fill_0(result);
+
     // Loop by element of result
-    for(int i=0; i<result->num_of_row; i++){
-        for(int j=0; j<result->num_of_col; j++){
-            double sum = 0.0;
-            // Loop by n, for mat_1 is m*n
-            for(int k=0; k<mat_1->num_of_col; k++){
-                sum += (mat_1->ptr[i * mat_1->num_of_col + k] * mat_2->ptr[k * mat_2->num_of_col + j]);
+    // Optimized: from i-j-k to i-k-j
+    for(int i=0; i<m; i++){
+        for(int k=0; k<n; k++){
+            double a_ik = mat_1->ptr[i * n + k];
+            for(int j=0; j<result->num_of_col; j++){
+                result->ptr[i * p + j] += a_ik * mat_2->ptr[k * p + j];
             }
-            result->ptr[i * result->num_of_col + j] = sum;
         }
     }
     return 0;
