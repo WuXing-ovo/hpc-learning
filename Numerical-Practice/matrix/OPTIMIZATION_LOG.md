@@ -72,3 +72,7 @@ Another bottleneck occurs with small matrices, the OpenMP implementation exhibit
 
 ![time vs size of OpenMP (static)](results/figures/time_vs_size_openmp_static.png)
 ![GFLOPS vs size of OpenMP (static)](results/figures/gflops_vs_size_openmp_static.png)
+
+## Optimized by compiler (a brief test)
+
+Using -O3 or -O3 -march=native shows four times faster. The test is conducting on Intel i9-13900hx, which supports AVX/AVX2.
