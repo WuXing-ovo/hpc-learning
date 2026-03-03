@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "matrix.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 // Initialize error code
 int matrix_errno = 0;
@@ -281,6 +284,7 @@ int matrix_multiply(struct matrix *mat_1, struct matrix *mat_2, struct matrix *r
 
     // Loop by element of result
     // Optimized: from i-j-k to i-k-j
+    #pragma omp parallel for schedule(static)
     for(int i=0; i<m; i++){
         for(int k=0; k<n; k++){
             double a_ik = mat_1->ptr[i * n + k];
