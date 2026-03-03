@@ -26,3 +26,26 @@ Max GFLOPS: 1.14
 
 ![time vs size of baseline](results/figures/time_vs_size_baseline.png)
 ![GFLOPS vs size of baseline](results/figures/gflops_vs_size_baseline.png)
+
+## i-k-j version
+
+### Implementation
+
+The loop structure was reorderd from i-j-k to i-k-j, result in more consistent performance. Benchmark across matrix sizes ranging from 64 to 1024 demonstrate that the GFLOPS remains stable.
+
+This stability stem from the sequntial memory access pattern inherent in the i-k-j loop. By maintaning a low cache miss rate regardless of matrix size, this pattern significant enhanced CPU efficiency and boosts the overall performance of the implementation.
+
+### Performance Data
+
+| Matrix Size | Time (ms)   | GFLOPS |
+| ----------- | ----------- | ------ |
+| 64          | 0.469574    | 1.12   |
+| 128         | 3.817395    | 1.10   |
+| 256         | 31.048955   | 1.08   |
+| 512         | 236.537991  | 1.13   |
+| 1024        | 1934.566046 | 1.11   |
+
+### Visualization
+
+![time vs size of baseline](results/figures/time_vs_size_ikj.png)
+![GFLOPS vs size of baseline](results/figures/gflops_vs_size_ikj.png)
